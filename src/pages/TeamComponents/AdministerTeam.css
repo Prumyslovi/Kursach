@@ -1,0 +1,100 @@
+.administer-team {
+    margin: 40px 40px;
+    padding: 20px;
+    background-color: #ffffff; /* Цвет фона системы */
+    border: 2px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .admin-title {
+    color: #1D334A; /* Цвет заголовка */
+    font-size: 24px; /* Размер шрифта заголовка */
+  }
+  
+  .admin-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .admin-list-item {
+    margin: 10px 0;
+    cursor: pointer;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #ffffff; /* Белый фон для списка */
+    transition: background-color 0.3s;
+  }
+  
+  .admin-list-item:hover {
+    background-color: #ffffff; /* Фон при наведении */
+  }
+  
+  .members-list {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+  
+  .members-list li {
+    padding: 10px 15px;
+  }
+  
+  .team-member {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 5px 0;
+  }
+  
+  .modalInput {
+    width: 100%;
+    margin: 8px 0;
+    height: 30px;
+    background-color: #ffffff;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .Button {
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid black;
+    border-radius: 5px;
+    background: #ffffff;
+    color: black;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .Button:hover {
+    background-color: black; /* Черный фон при наведении */
+    color: white; /* Белый цвет текста при наведении */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Тень при наведении */
+  }
+  
+  .add-member-container {
+    display: flex;
+    margin-top: 10px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .add-member-container input,
+  .add-member-container select {
+    margin-right: 10px;
+    flex: 1; /* Ширина элемента заполняет доступное пространство */
+  }
+
+  .list {
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid black;
+    border-radius: 2px;
+    background: #ffffff;
+    color: black;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
