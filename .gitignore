@@ -35,3 +35,26 @@ CarnetDeTaches.http
 # Игнорирование файлов и папок, связанных с статическими ресурсами и кэшированием
 staticwebassets/
 runtimes/
+# Ignore bin and obj directories
+bin/
+obj/
+
+# Ignore IDE files
+.vs/
+.vscode/
+node_modules/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore binary files
+*.bin
+*.dll
+*.pdb
+*.exe
+
+# Ignore logs and other temp files
+*.log
+*.tmp
