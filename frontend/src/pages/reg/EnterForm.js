@@ -33,6 +33,10 @@ const EnterForm = ({ visible, onVisibilityChange, onLogin }) => {
                 setIsLoading(false);
                 return;
             }
+            
+            // Сохраняем ID пользователя в localStorage
+            localStorage.setItem('memberId', member.memberId);
+
             onLogin(member.memberId);
             clearForm();
             onVisibilityChange(false); // Скрываем форму

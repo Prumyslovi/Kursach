@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import * as XLSX from 'xlsx'; // Импортируем библиотеку для работы с Excel
+import { fetchTasks } from '../../services/api';
+import * as XLSX from 'xlsx';
 import './ProjectList.css';
 
-const KanbanBoard = ({ data, onDragEnd, setData }) => {
+// const KanbanBoard = ({ projectId, onDragEnd, setData }) => {
+const KanbanBoard = ({ projectId, setData }) => {
     const [newCardData, setNewCardData] = useState({
         title: '',
         description: '',
@@ -12,7 +14,8 @@ const KanbanBoard = ({ data, onDragEnd, setData }) => {
     });
     const [currentLaneId, setCurrentLaneId] = useState(null);
     const [editingCardId, setEditingCardId] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false); // Стейт для отображения модального окна
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [boardData, setBoardData] = useState({ lanes: {} });  // Локальный стейт для данных доски
 
     const options = [
         { value: '', label: 'Выберите ответственного' },
@@ -20,6 +23,104 @@ const KanbanBoard = ({ data, onDragEnd, setData }) => {
         { value: 'Кирилл', label: 'Кирилл' },
         { value: 'Игорь', label: 'Игорь' }
     ];
+
+    const defaultLanes = [
+        { title: 'В процессе', id: 'lane-in-progress', cards: [] },
+        { title: 'Выполнено', id: 'lane-completed', cards: [] },
+        { title: 'Провалено', id: 'lane-failed', cards: [] },
+        { title: 'В планах', id: 'lane-planned', cards: [] }
+    ];
+
+    const onDragEnd = (result) => {
+        const { destination, source } = result;
+    
+        // Если нет места назначения, то ничего не делаем
+        if (!destination) return;
+    
+        // Если перетащили на тот же элемент, то ничего не меняем
+        if (
+            destination.droppableId === source.droppableId &&
+            destination.index === source.index
+        ) {
+            return;
+        }
+    
+        // Проверяем идентификаторы, которые приходят
+        console.log("Source droppableId:", source.droppableId);
+        console.log("Destination droppableId:", destination.droppableId);
+    
+        // Получаем исходный и целевой лейны
+        const sourceLane = boardData.lanes[source.droppableId];  // Используем droppableId как ключ
+        const destinationLane = boardData.lanes[destination.droppableId];  // Используем droppableId как ключ
+    
+        // Логирование для отладки
+        console.log("Source Lane:", sourceLane);
+        console.log("Destination Lane:", destinationLane);
+    
+        // Если лейны не найдены, выводим ошибку
+        if (!sourceLane || !destinationLane) {
+            console.error("Source or destination lane not found!");
+            return;
+        }
+    
+        // Извлекаем карточку, которую перетаскиваем
+        const [draggedCard] = sourceLane.cards.splice(source.index, 1);  // Извлекаем перетаскиваемую карточку
+    
+        // Добавляем карточку в новый лейн
+        destinationLane.cards.splice(destination.index, 0, draggedCard);
+    
+        // Логирование, чтобы увидеть изменения
+        console.log("Dragged card:", draggedCard);
+        console.log("Updated source lane:", sourceLane);
+        console.log("Updated destination lane:", destinationLane);
+    
+        // Обновляем данные лейнов
+        const updatedLanes = {
+            ...boardData.lanes,
+            [sourceLane.id]: sourceLane,  // Обновляем исходный лейн
+            [destinationLane.id]: destinationLane,  // Обновляем целевой лейн
+        };
+    
+        // Обновляем состояние
+        setBoardData({ lanes: updatedLanes });
+    };    
+
+    useEffect(() => {
+        const loadTasks = async () => {
+            try {
+                const fetchedTasks = await fetchTasks(projectId);
+                const lanes = fetchedTasks.reduce((acc, task) => {
+                    if (!acc[task.status]) {
+                        acc[task.status] = {
+                            id: `lane-${task.status}`,
+                            title: task.status,
+                            cards: []
+                        };
+                    }
+                    acc[task.status].cards.push({
+                        id: task.taskId,
+                        title: task.taskName,
+                        description: task.description,
+                        deadline: task.deadLine,
+                        assignee: task.memberId
+                    });
+                    return acc;
+                }, {});
+
+                defaultLanes.forEach((defaultLane) => {
+                    if (!lanes[defaultLane.title]) {
+                        lanes[defaultLane.title] = defaultLane;
+                    }
+                });
+
+                setBoardData({ lanes });  // Обновляем локальный стейт данными
+            } catch (error) {
+                console.error('Ошибка при загрузке задач:', error);
+            }
+        };
+
+        loadTasks();
+    }, [projectId]);
 
     const handleNewCardChange = (field, value) => {
         setNewCardData((prev) => ({ ...prev, [field]: value }));
@@ -42,12 +143,12 @@ const KanbanBoard = ({ data, onDragEnd, setData }) => {
             };
 
             const updatedLanes = {
-                ...data.lanes,
+                ...boardData.lanes,  // Используем boardData вместо data
                 [currentLaneId]: {
-                    ...data.lanes[currentLaneId],
+                    ...boardData.lanes[currentLaneId],
                     cards: editingCardId
-                        ? data.lanes[currentLaneId].cards.map((card) => (card.id === editingCardId ? newCard : card))
-                        : [...data.lanes[currentLaneId].cards, newCard]
+                        ? boardData.lanes[currentLaneId].cards.map((card) => (card.id === editingCardId ? newCard : card))
+                        : [...boardData.lanes[currentLaneId].cards, newCard]
                 }
             };
 
@@ -58,7 +159,7 @@ const KanbanBoard = ({ data, onDragEnd, setData }) => {
 
             setNewCardData({ title: '', description: '', deadline: '', assignee: '' });
             setEditingCardId(null);
-            setIsModalOpen(false); // Закрыть модальное окно после добавления задачи
+            setIsModalOpen(false);
         }
     };
 
@@ -77,7 +178,7 @@ const KanbanBoard = ({ data, onDragEnd, setData }) => {
         const worksheetData = [];
         worksheetData.push(['Статус', 'Название задачи', 'Описание', 'Срок выполнения', 'Ответственный']);
 
-        Object.values(data.lanes).forEach((lane) => {
+        Object.values(boardData.lanes).forEach((lane) => {  // Используем boardData вместо data
             lane.cards.forEach((card) => {
                 worksheetData.push([
                     lane.title,
@@ -104,15 +205,12 @@ const KanbanBoard = ({ data, onDragEnd, setData }) => {
             const binaryString = event.target.result;
             const wb = XLSX.read(binaryString, { type: 'binary' });
 
-            // Предположим, что данные в первом листе
             const ws = wb.Sheets[wb.SheetNames[0]];
-            const data = XLSX.utils.sheet_to_json(ws, { header: 1 }); // Читаем данные как массив
+            const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
 
             const lanes = {};
-            let currentLane = '';
-
             data.forEach((row, index) => {
-                if (index === 0) return; // Пропускаем заголовок
+                if (index === 0) return;
 
                 const [status, taskTitle, description, deadline, assignee] = row;
 
@@ -141,7 +239,7 @@ const KanbanBoard = ({ data, onDragEnd, setData }) => {
         reader.readAsBinaryString(file);
     };
 
-    const lanes = data?.lanes ? Object.values(data.lanes) : [];
+    const lanes = boardData?.lanes ? Object.values(boardData.lanes) : [];  // Используем boardData вместо data
 
     return (
         <div>
@@ -170,19 +268,17 @@ const KanbanBoard = ({ data, onDragEnd, setData }) => {
                                     {...provided.droppableProps}
                                 >
                                     <h3>{lane.title}</h3>
-
                                     <button
                                         className="add-task-button"
                                         onClick={() => {
                                             setCurrentLaneId(lane.id);
                                             setNewCardData({ title: '', description: '', deadline: '', assignee: '' });
                                             setEditingCardId(null);
-                                            setIsModalOpen(true); // Открываем модальное окно для добавления задачи
+                                            setIsModalOpen(true);
                                         }}
                                     >
                                         +
                                     </button>
-
                                     {lane.cards.map((card, index) => (
                                         <Draggable key={card.id} draggableId={card.id} index={index}>
                                             {(provided) => (
@@ -238,12 +334,12 @@ const KanbanBoard = ({ data, onDragEnd, setData }) => {
                                                             </div>
                                                         </div>
                                                     ) : (
-                                                    <div>
-                                                        <h4>{card.title}</h4>
-                                                        <h5>{card.description}</h5>
-                                                        <h5>Дедлайн: {card.deadline}</h5>
-                                                        <h5>Ответственный: {card.assignee}</h5>
-                                                    </div>
+                                                        <div>
+                                                            <h4>{card.title}</h4>
+                                                            <h5>{card.description}</h5>
+                                                            <h5>Дедлайн: {card.deadline}</h5>
+                                                            <h5>Ответственный: {card.assignee}</h5>
+                                                        </div>
                                                     )}
                                                 </div>
                                             )}
@@ -256,8 +352,6 @@ const KanbanBoard = ({ data, onDragEnd, setData }) => {
                     ))}
                 </div>
             </DragDropContext>
-
-            {/* Модальное окно для добавления задачи */}
             {isModalOpen && (
                 <div className="modalRegForm">
                     <div className="modalContent">

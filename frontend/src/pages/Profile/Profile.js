@@ -43,25 +43,36 @@ const Profile = ({ memberId, onUpdateUserInfo }) => {
     const handleSave = async () => {
         setError('');
         setSuccess(''); // Сбрасываем предыдущие уведомления
-
+    
         if (!oldPassword) {
             alert('Введите старый пароль для подтверждения!');
             return;
         }
-
+    
+        // Если новый пароль введён, проверяем его корректность
+        if (newPassword && newPassword.length < 6) {
+            alert('Новый пароль должен содержать не менее 6 символов!');
+            return;
+        }
+    
+        // Создаём объект обновлённых данных
         const updatedData = { 
             memberId,
             username, 
             firstName, 
-            oldPassword, 
-            newPassword 
+            oldPassword,
         };
-
+    
+        // Добавляем поле `newPassword` только если оно заполнено
+        if (newPassword) {
+            updatedData.newPassword = newPassword;
+        }
+    
         try {
             await updateProfile(updatedData); // Отправляем данные на сервер
             setSuccess('Профиль успешно обновлён!');
             setOldPassword('');
-            setNewPassword('');
+            setNewPassword(''); // Сбрасываем поля пароля только при успехе
         } catch (error) {
             console.error(error);
             setError('Не удалось обновить данные профиля');

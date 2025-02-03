@@ -127,8 +127,8 @@ const Home = () => {
                 {activeContent === 'howToStart' && <div className="howToStartInfo">{renderInfoBlocks(howToStartInfo)}</div>}
 
                 {activeContent === 'teamsList' && <TeamList memberId={userId} />}
-                {activeContent === 'createTeam' && <TeamManagement />}
-                {activeContent === 'projectsList' && <ProjectList />}
+                {activeContent === 'createTeam' && <TeamManagement memberId={userId} />}
+                {activeContent === 'projectsList' && <ProjectList memberId={userId}/>}
                 {activeContent === 'createProject' && <ProjectManagement />}
                 
 

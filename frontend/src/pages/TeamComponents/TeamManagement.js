@@ -4,7 +4,7 @@ import AdministerTeam from './AdministerTeam'; // Импорт компонен�
 import JoinTeam from './JoinTeam'; // Импорт компонента
 import './TeamManagement.css'; // Импортируем стили
 
-const TeamManagement = () => {
+const TeamManagement = (memberId) => {
   const [selectedOption, setSelectedOption] = useState('create');
 
   return (
@@ -22,7 +22,7 @@ const TeamManagement = () => {
       <div className="content">
         {selectedOption === 'create' && <CreateTeam />}
         {selectedOption === 'admin' && <AdministerTeam />}
-        {selectedOption === 'join' && <JoinTeam />}
+        {selectedOption === 'join' && <JoinTeam memberId={memberId}/>}
       </div>
     </div>
   );

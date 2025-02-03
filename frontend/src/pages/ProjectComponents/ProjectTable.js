@@ -13,11 +13,11 @@ const ProjectTable = ({ projects, onRowClick, selectedProject }) => (
         {projects.map((project) => (
           <tr
             key={project.id}
-            onClick={() => onRowClick(project.id)}
+            onClick={() => onRowClick(project.projectId)}
             className={`project-row ${selectedProject === project.id ? 'selected' : ''}`}
           >
-            <td>{project.name}</td>
-            <td>{project.manager}</td>
+            <td>{project.projectName}</td>
+            <td>{project.projectId}</td>
           </tr>
         ))}
       </tbody>
