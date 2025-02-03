@@ -1,0 +1,37 @@
+# Игнорирование папок с бинарными файлами
+bin/
+obj/
+
+# Игнорирование временных файлов
+.vs/
+.vscode/
+DesignTimeBuild/
+.dtbcache.v2
+.futdcache.v2
+.suo
+
+# Игнорирование файлов индексации
+*.vsidx
+
+# Игнорирование файлов конфигураций для разработки
+appsettings.Development.json
+
+# Игнорирование бинарных файлов и библиотек
+*.bin
+*.dll
+*.exe
+*.pdb
+
+# Игнорирование файлов, генерируемых сборкой
+CarnetDeTaches.exe
+CarnetDeTaches.pdb
+CarnetDeTaches.deps.json
+CarnetDeTaches.runtimeconfig.json
+CarnetDeTaches.staticwebassets.endpoints.json
+CarnetDeTaches.sln
+CarnetDeTaches.csproj.user
+CarnetDeTaches.http
+
+# Игнорирование файлов и папок, связанных с статическими ресурсами и кэшированием
+staticwebassets/
+runtimes/
