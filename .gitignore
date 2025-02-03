@@ -1,60 +1,23 @@
-# Игнорирование папок с бинарными файлами
+# Ignore build and binary directories
 bin/
 obj/
+Debug/
+DebugFiles/
+runtimes/
 
-# Игнорирование временных файлов
+# Ignore IDE and editor files
 .vs/
 .vscode/
-DesignTimeBuild/
-.dtbcache.v2
-.futdcache.v2
+.idea/
 .suo
 
-# Игнорирование файлов индексации
-*.vsidx
-
-# Игнорирование файлов конфигураций для разработки
-appsettings.Development.json
-
-# Игнорирование бинарных файлов и библиотек
-*.bin
+# Ignore platform-specific binaries
 *.dll
 *.exe
 *.pdb
 
-# Игнорирование файлов, генерируемых сборкой
-CarnetDeTaches.exe
-CarnetDeTaches.pdb
-CarnetDeTaches.deps.json
-CarnetDeTaches.runtimeconfig.json
-CarnetDeTaches.staticwebassets.endpoints.json
-CarnetDeTaches.sln
-CarnetDeTaches.csproj.user
-CarnetDeTaches.http
-
-# Игнорирование файлов и папок, связанных с статическими ресурсами и кэшированием
-staticwebassets/
-runtimes/
-# Ignore bin and obj directories
-bin/
-obj/
-
-# Ignore IDE files
-.vs/
-.vscode/
-node_modules/
-.idea/
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-
-# Ignore binary files
+# Ignore metadata and cached files
 *.bin
-*.dll
-*.pdb
-*.exe
-
-# Ignore logs and other temp files
+*.cache
+*.json
 *.log
-*.tmp
